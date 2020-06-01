@@ -23,7 +23,14 @@ def createUser():
 
 @app.route('/users',methods=['GET'])
 def getUsers():
-    return 'received'
+    users=[]
+    for doc in db.find():
+        users.append({
+            '_id':str(ObjectId(doc['_id'])),
+            'email':doc['email'],
+            'password':doc['password']
+        })
+    return jsonify(str(users))
 
 @app.route('/user/<id>',methods=['GET'])
 def getUser():
