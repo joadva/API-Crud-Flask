@@ -11,6 +11,10 @@ mongo = PyMongo(app)
 db= mongo.db.users
 
 
+@app.route('/',)
+def corriendo():
+    return ' <h1>Corriendo Made with FLask PYTHON  </h1>'
+
 @app.route('/users',methods=['POST'])
 def createUser():  
      id= db.insert({
@@ -27,6 +31,7 @@ def getUsers():
     for doc in db.find():
         users.append({
             '_id':str(ObjectId(doc['_id'])),
+            'name':doc['name'],
             'email':doc['email'],
             'password':doc['password']
         })
@@ -38,6 +43,7 @@ def getUser(id):
     print(user)
     return jsonify({
         '_id':str(ObjectId(user['_id'])),
+        'name':user['name'],
         'email':user['email'],
         'password':user['password']
 
@@ -49,8 +55,13 @@ def deleteUser(id):
   return jsonify({'message': 'Usuario eliminado <3 '})
 
 @app.route('/users/<id>',methods=['PUT'])
-def updateUser():
-    return 'received'
+def updateUser(id):
+    db.update_one({'_id':ObjectId(id)},{'$set': {
+        'name': request.json['name'],
+        'email':request.json['email'],
+        'password':request.json['password']
+    } })
+    return jsonify({'message': 'Usuario actualziado <3 '})
 
 
 if __name__ == "__main__":
